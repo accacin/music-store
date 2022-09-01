@@ -1,9 +1,22 @@
+import async, { AsyncFunction } from 'async';
 import { Request, Response } from 'express'
+import Album from '../models/album'
+import Category from '../models/category'
 
 // Home Page
-export const index = (req: Request, res: Response) => {
-    res.send('NOT IMPLEMENTED: Site Home Page')
-}
+export const index = async (req: Request, res: Response) => {
+    try {
+        const albumCount = await Album.countDocuments();
+        const categoryCount = await Category.countDocuments();
+        const results = {
+            albumCount,
+            categoryCount
+        };
+        res.render('index', { title: 'Music Store', data: results })
+    } catch(err) {
+        res.render('index', { title: 'Music Store', error: err })
+    }
+};
 
 // Display list of all Albums
 export const album_list = (req: Request, res: Response) => {

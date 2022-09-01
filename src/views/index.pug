@@ -2,4 +2,15 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+  p Welcome to your local music store.
+
+  h2 Dynamic Content
+
+  if error
+    p Error getting dynamic content.
+  else
+    p Our current stock levels
+
+    ul
+      li #[strong Albums:] !{data.albumCount}
+      li #[strong Categories:] !{data.categoryCount}
