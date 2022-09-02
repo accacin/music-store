@@ -1,4 +1,5 @@
 import cookieParser from 'cookie-parser'
+import * as dotenv from 'dotenv'
 import morgan from 'morgan'
 import path from 'path'
 import helmet from 'helmet'
@@ -15,8 +16,13 @@ import { CustomError } from '@shared/errors'
 
 import { connect, connection } from 'mongoose'
 
+if (process.env.NODE_ENV !== 'production') {
+    dotenv.config();
+}
+
 // Constants
 const app = express()
+const mongoDB = `mongodb+srv://db:${process.env.MONGO_PASSWORD}@cluster0.ogm6kvj.mongodb.net/?retryWrites=true&w=majority`
 
 /***********************************************************************************
  *                                  MongoDB
