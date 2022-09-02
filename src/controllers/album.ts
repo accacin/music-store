@@ -1,26 +1,35 @@
-import async, { AsyncFunction } from 'async';
-import { Request, Response } from 'express'
+import async, { AsyncFunction } from 'async'
+import { Request, Response, NextFunction } from 'express'
 import Album from '../models/album'
 import Category from '../models/category'
 
 // Home Page
 export const index = async (req: Request, res: Response) => {
     try {
-        const albumCount = await Album.countDocuments();
-        const categoryCount = await Category.countDocuments();
+        const albumCount = await Album.countDocuments()
+        const categoryCount = await Category.countDocuments()
         const results = {
             albumCount,
-            categoryCount
-        };
+            categoryCount,
+        }
         res.render('index', { title: 'Music Store', data: results })
-    } catch(err) {
+    } catch (err) {
         res.render('index', { title: 'Music Store', error: err })
     }
-};
+}
 
 // Display list of all Albums
-export const album_list = (req: Request, res: Response) => {
-    res.send('NOT IMPLEMENTED: Album list')
+export const album_list = (req: Request, res: Response, next: NextFunction) => {
+    Album.find({}, 'name artist')
+        .sort({ name: 1 })
+        .populate('artist')
+        .exec(function (err, list_albums) {
+            if (err) return next(err)
+            res.render('album_list', {
+                title: 'All Albums',
+                album_list: list_albums,
+            })
+        })
 }
 
 // Display info page for a specific Album
