@@ -1,4 +1,3 @@
-import async, { AsyncFunction } from 'async'
 import { Request, Response, NextFunction } from 'express'
 import Album from '../models/album'
 import Category from '../models/category'
@@ -19,22 +18,37 @@ export const index = async (req: Request, res: Response) => {
 }
 
 // Display list of all Albums
-export const album_list = (req: Request, res: Response, next: NextFunction) => {
-    Album.find({}, 'name artist')
-        .sort({ name: 1 })
-        .populate('artist')
-        .exec(function (err, list_albums) {
-            if (err) return next(err)
-            res.render('album_list', {
-                title: 'All Albums',
-                album_list: list_albums,
-            })
-        })
+export const album_list = async (
+    _: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const albums = await Album.find({}, 'name artist')
+            .sort({ name: 1 })
+            .populate('category')
+        res.render('album_list', { title: 'All Albums', album_list: albums })
+    } catch (err) {
+        next(err)
+    }
 }
 
 // Display info page for a specific Album
-export const album_info = (req: Request, res: Response) => {
-    res.send(`NOT IMPLEMENTED: Album info: ${req.params.id}`)
+export const album_info = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const albumInfo = await Album.findById(req.params.id).populate(
+            'category'
+        )
+        res.render('album_info', {
+            data: albumInfo,
+        })
+    } catch (err) {
+        next(err)
+    }
 }
 
 // Display Album create form on GET

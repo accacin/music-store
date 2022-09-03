@@ -7,6 +7,7 @@ block content
     each album in album_list
       li
         a(href=album.url) #{album.name} - #{album.artist}
+        |  - #{album.category.name}
 
     else
       li There are no books.

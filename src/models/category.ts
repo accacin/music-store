@@ -11,7 +11,7 @@ const CategorySchema = new Schema<ICategory>({
 })
 
 CategorySchema.virtual('url').get(function () {
-    return `/category/${this._id}`
+    return `/store/category/${this._id}`
 })
 
 const Category = model<ICategory>('Category', CategorySchema)

@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  h1 #{data.artist} - #{data.name}
+  p #[strong Description: ] #{data.description}
+
+  p #[stong Genre: ]
+    a(href=data.category.url) #{data.category.name}
+  p #[stong Price: ] #{data.price_currency}
+  p #[stong Stock Count: ] #{data.stock_count}
+
