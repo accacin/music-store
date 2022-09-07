@@ -94,7 +94,7 @@ app.use(express.static(staticDir))
 
 // Serve index.html file
 app.get('*', (_: Request, res: Response) => {
-    res.render('index', { title: 'Home Page', message: 'Welcome!' })
+    res.redirect('/store');
 })
 
 // Export here and start in a diff file (for testing).
