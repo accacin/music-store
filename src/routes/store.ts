@@ -14,6 +14,8 @@ import {
     category_detail,
     category_create_get,
     category_create_post,
+    category_delete_get,
+    category_delete_post,
 } from '../controllers/category'
 
 // ALBUM ROUTES
@@ -35,11 +37,17 @@ storeRouter.get('/album/:id', album_info)
 
 // CATEGORY ROUTES
 
-// GET requeest for creating an category
+// GET requeest for creating a category
 storeRouter.get('/category/create', category_create_get)
 
-// POST request for creating an category
+// POST request for creating a category
 storeRouter.post('/category/create', category_create_post)
+
+// GET request for deleting a category
+storeRouter.get('/category/:id/delete', category_delete_get)
+
+// POST request for deleting a category
+storeRouter.post('/category/:id/delete', category_delete_post)
 
 // GET request for a category
 storeRouter.get('/category/:id', category_detail)
