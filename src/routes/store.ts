@@ -8,6 +8,8 @@ import {
     album_info,
     album_create_get,
     album_create_post,
+    album_delete_get,
+    album_delete_post,
 } from '../controllers/album'
 import {
     category_list,
@@ -28,6 +30,12 @@ storeRouter.get('/album/create', album_create_get)
 
 // POST request for creating an album
 storeRouter.post('/album/create', album_create_post)
+
+// GET request for deleting a category
+storeRouter.get('/album/:id/delete', album_delete_get)
+
+// POST request for deleting a category
+storeRouter.post('/album/:id/delete', album_delete_post)
 
 // GET request for all albums
 storeRouter.get('/album', album_list)

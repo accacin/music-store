@@ -62,13 +62,43 @@ export const album_create_post = (req: Request, res: Response) => {
 }
 
 // Display Album delete form on GET
-export const album_delete_get = (req: Request, res: Response) => {
-    res.send('NOT IMPLEMENTED: Album delete GET')
+export const album_delete_get = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const album = await Album.findById(req.params.id)
+
+        if (album == null) {
+            res.redirect('/store/albums')
+        }
+
+        res.render('album_delete', {
+            title: `Delete ${album?.name}?`,
+            album,
+        })
+    } catch (err) {
+        next(err)
+    }
 }
 
 // Handle Album delete on POST
-export const album_delete_post = (req: Request, res: Response) => {
-    res.send('NOT IMPLEMENTED: Album delete POST')
+export const album_delete_post = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const album = await Album.findById(req.params.id)
+        if (album != null) {
+            await Album.findByIdAndDelete(req.body.albumid)
+        }
+
+        res.redirect('/store/albums')
+    } catch (err) {
+        next(err)
+    }
 }
 
 // Display Album update form on GET.
