@@ -8,7 +8,7 @@ export interface ICategory {
 
 const CategorySchema = new Schema<ICategory>({
     name: { type: String, required: true },
-    description: { type: String, maxlength: 100 },
+    description: { type: String, maxlength: 500 },
 })
 
 CategorySchema.virtual('url').get(function () {

@@ -4,16 +4,17 @@ export interface IAlbum {
     name: string
     artist: string
     description: string
-    category: Types.ObjectId
+    category: Array<Types.ObjectId>
     price: number
     stock_count: number
+    url: string
 }
 
 const AlbumSchema = new Schema<IAlbum>({
     name: { type: String, required: true },
     artist: { type: String, required: true, maxlength: 100 },
     description: { type: String, maxlength: 100 },
-    category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
+    category: { type: [Schema.Types.ObjectId], ref: 'Category', required: true },
     price: { type: Number, min: 1, max: 10000, required: true },
     stock_count: { type: Number, min: 1, max: 10000 },
 })

@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from 'express'
+import { body, validationResult } from 'express-validator'
 import Album from '../models/album'
 import Category from '../models/category'
 
 // Home Page
-export const index = async (req: Request, res: Response) => {
+export const index = async (_: Request, res: Response) => {
     try {
         const albumCount = await Album.countDocuments()
         const categoryCount = await Category.countDocuments()
@@ -52,14 +53,80 @@ export const album_info = async (
 }
 
 // Display Album create form on GET
-export const album_create_get = (req: Request, res: Response) => {
-    res.send('NOT IMPLEMENTED: Album create GET')
+export const album_create_get = async (
+    _: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const categories = await Category.find()
+        res.render('album_form', {
+            title: 'Add album',
+            categories,
+        })
+    } catch (err) {
+        next(err)
+    }
 }
 
 // Handle Album create on post
-export const album_create_post = (req: Request, res: Response) => {
-    res.send('NOT IMPLEMENTED: Album create POST')
-}
+export const album_create_post = [
+    (req: Request, _: Response, next: NextFunction) => {
+        if (!Array.isArray(req.body.category)) {
+            req.body.category =
+                typeof req.body.category === 'undefined' ? [] : [req.body.category]
+        }
+        next()
+    },
+
+    // Validate and sanitize
+    body('name', 'Name must not be empty').trim().isLength({ min: 1 }).escape(),
+    body('artist', 'Artist must not be empty')
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    body('description', 'Description must not be empty')
+        .trim()
+        .isLength({ min: 10 })
+        .escape(),
+    body('category.*').escape(),
+    body('stock', 'Stock must not be empty').isNumeric().escape(),
+    body('price', 'Price must not be empty').isNumeric().escape(),
+
+    async (req: Request, res: Response, next: NextFunction) => {
+        const errors = validationResult(req)
+
+        const album = new Album({
+            name: req.body.name,
+            artist: req.body.artist,
+            description: req.body.description,
+            category: req.body.category,
+            price: req.body.price,
+            stock: req.body.stock,
+        })
+
+        if (errors.isEmpty()) {
+            try {
+                await album.save()
+                res.redirect('/store');
+            } catch (err) {
+                next(err)
+            }
+        } else {
+            try {
+                const categories = await Category.find()
+                res.render('album_form', {
+                    title: 'Create Album',
+                    categories,
+                    album,
+                    errors: errors.array(),
+                })
+            } catch (err) {
+                next(err)
+            }
+        }
+    },
+]
 
 // Display Album delete form on GET
 export const album_delete_get = async (
@@ -102,11 +169,15 @@ export const album_delete_post = async (
 }
 
 // Display Album update form on GET.
-export const author_update_get = (req: Request, res: Response) => {
+export const album_update_get = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     res.send('NOT IMPLEMENTED: Album update GET')
 }
 
 // Handle Album update on POST.
-export const author_update_post = (req: Request, res: Response) => {
+export const album_update_post = (req: Request, res: Response) => {
     res.send('NOT IMPLEMENTED: Album update POST')
 }
