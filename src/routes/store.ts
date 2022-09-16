@@ -20,6 +20,8 @@ import {
     category_create_post,
     category_delete_get,
     category_delete_post,
+    category_update_get,
+    category_update_post,
 } from '../controllers/category'
 
 // ALBUM ROUTES
@@ -58,6 +60,12 @@ storeRouter.get('/category/create', category_create_get)
 
 // POST request for creating a category
 storeRouter.post('/category/create', category_create_post)
+
+// GET request for updating a category
+storeRouter.get('/category/:id/update', category_update_get)
+
+// POST request for updating a category
+storeRouter.post('/category/:id/update', category_update_post)
 
 // GET request for deleting a category
 storeRouter.get('/category/:id/delete', category_delete_get)

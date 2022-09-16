@@ -146,11 +146,67 @@ export const category_delete_post = async (
 }
 
 // Display category update form on GET.
-export const category_update_get = (req: Request, res: Response) => {
-    res.send('NOT IMPLEMENTED: category update GET')
+export const category_update_get = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const category = await Category.findById(req.params.id)
+
+        if (category == null) {
+            throw new Error('Category not found')
+        }
+
+        res.render('category_form', {
+            title: 'Update Category',
+            category,
+        })
+    } catch (err) {
+        next(err)
+    }
 }
 
 // Handle category update on POST.
-export const category_update_post = (req: Request, res: Response) => {
-    res.send('NOT IMPLEMENTED: category update POST')
-}
+export const category_update_post = [
+    // Validate and santize the name field
+    body('name', 'Category name required').trim().isLength({ min: 3 }).escape(),
+    body('description', 'Category description required')
+        .trim()
+        .isLength({ min: 10 })
+        .escape(),
+    async (req: Request, res: Response, next: NextFunction) => {
+        // Get the validation errors from the request
+        const errors = validationResult(req)
+        const category = new Category({
+            name: req.body.name,
+            description: req.body.description,
+            _id: req.params.id,
+        })
+
+        if (errors.isEmpty()) {
+            try {
+                const updatedCategory = await Category.findByIdAndUpdate(
+                    req.params.id,
+                    category,
+                    {}
+                ).exec()
+                if (updatedCategory) {
+                    res.redirect(updatedCategory.url)
+                }
+            } catch (err) {
+                next(err)
+            }
+        } else {
+            try {
+                res.render('category_form', {
+                    title: 'Update Category',
+                    category,
+                    errors: errors.array(),
+                })
+            } catch (err) {
+                next(err)
+            }
+        }
+    },
+]

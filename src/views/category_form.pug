@@ -9,7 +9,7 @@ block content
       input#name.form-control(type='text', placeholder='Rock' name='name' value=(undefined === category ? '' : category.name))
     div.form-group
       label(for='description') Description:
-      input#name.form-control(type='text', placeholder='The best genre' name='description' value=(undefined === description ? '' : category.description))
+      input#name.form-control(type='text', placeholder='The best genre' name='description' value=(undefined === category ? '' : category.description))
     button.btn.btn-primary(type='submit') Submit
 
   if errors
