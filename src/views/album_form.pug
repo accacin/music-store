@@ -9,23 +9,23 @@ block content
       input#name.form-control(type='text', placeholder='Name of Album' name='name' required='true' value=(undefined === album ? '' : album.name) )
     div.form-group
       label(for='artist') Arist:
-      input#artist.form-control(type='text', placeholder='Artist' name='artist' required='true')
+      input#artist.form-control(type='text', placeholder='Artist' name='artist' required='true' value=(undefined === album ? '' : album.artist))
     div.form-group
       label(for='description') Description:
-      input#description.form-control(type='text', placeholder='Description' name='description' required='true')
+      input#description.form-control(type='text', placeholder='Description' name='description' required='true' value=(undefined === album ? '' : album.description))
     div.form-group
       label(for='stock') In Stock Amount:
-      input#stock.form-control(type='text', placeholder='stock' name='stock' required='true')
+      input#stock.form-control(type='text', placeholder='stock' name='stock' required='true' value=(undefined === album ? '' : album.stock_count))
     div.form-group
       label(for='price') Price:
-      input#stock.form-control(type='text', placeholder='price' name='price' required='true')
+      input#stock.form-control(type='text', placeholder='price' name='price' required='true' value=(undefined === album ? '' : album.price))
     div.form-group
       label Genre:
       div
         for category in categories
           div(style='display: inline; padding-right:10px;')
             input.checkbox-input(type='checkbox', name='category', id=category._id, value=category._id, checked=(
-              (undefined === album) ? false : category.name === album.category
+              album.category.some(c => c.name === category.name) ? true : false
             ))
             label(for=category._id) #{category.name}
     button.btn.btn-primary(type='submit') Submit
@@ -33,4 +33,4 @@ block content
   if errors
     ul
       for error in errors
-        li!= error.msgjkjkj
+        li!= error.msg

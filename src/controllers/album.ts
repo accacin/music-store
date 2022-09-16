@@ -74,7 +74,9 @@ export const album_create_post = [
     (req: Request, _: Response, next: NextFunction) => {
         if (!Array.isArray(req.body.category)) {
             req.body.category =
-                typeof req.body.category === 'undefined' ? [] : [req.body.category]
+                typeof req.body.category === 'undefined'
+                    ? []
+                    : [req.body.category]
         }
         next()
     },
@@ -108,7 +110,7 @@ export const album_create_post = [
         if (errors.isEmpty()) {
             try {
                 await album.save()
-                res.redirect('/store');
+                res.redirect('/store')
             } catch (err) {
                 next(err)
             }
@@ -169,15 +171,93 @@ export const album_delete_post = async (
 }
 
 // Display Album update form on GET.
-export const album_update_get = (
+export const album_update_get = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
-    res.send('NOT IMPLEMENTED: Album update GET')
+    try {
+        const album = await Album.findById(req.params.id).populate('category')
+        const categories = await Category.find()
+
+        if (album == null) {
+            throw new Error('Album not found')
+        }
+
+        res.render('album_form', {
+            title: 'Update Album',
+            album,
+            categories,
+        })
+    } catch (err) {
+        next(err)
+    }
 }
 
 // Handle Album update on POST.
-export const album_update_post = (req: Request, res: Response) => {
-    res.send('NOT IMPLEMENTED: Album update POST')
-}
+export const album_update_post = [
+    (req: Request, _: Response, next: NextFunction) => {
+        if (!Array.isArray(req.body.category)) {
+            req.body.category =
+                typeof req.body.category === 'undefined'
+                    ? []
+                    : [req.body.category]
+        }
+        next()
+    },
+
+    // Validate and sanitize
+    body('name', 'Name must not be empty').trim().isLength({ min: 1 }).escape(),
+    body('artist', 'Artist must not be empty')
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    body('description', 'Description must not be empty')
+        .trim()
+        .isLength({ min: 10 })
+        .escape(),
+    body('category.*').escape(),
+    body('stock', 'Stock must not be empty').isNumeric().escape(),
+    body('price', 'Price must not be empty').isNumeric().escape(),
+
+    async (req: Request, res: Response, next: NextFunction) => {
+        const errors = validationResult(req)
+
+        const album = new Album({
+            name: req.body.name,
+            artist: req.body.artist,
+            description: req.body.description,
+            category: req.body.category,
+            price: req.body.price,
+            stock: req.body.stock,
+            _id: req.params.id,
+        })
+
+        if (errors.isEmpty()) {
+            try {
+                const updatedAlbum = await Album.findByIdAndUpdate(
+                    req.params.id,
+                    album,
+                    {}
+                ).exec()
+                if (updatedAlbum) {
+                    res.redirect(updatedAlbum.url)
+                }
+            } catch (err) {
+                next(err)
+            }
+        } else {
+            try {
+                const categories = await Category.find()
+                res.render('album_form', {
+                    title: 'Update Album',
+                    categories,
+                    album,
+                    errors: errors.array(),
+                })
+            } catch (err) {
+                next(err)
+            }
+        }
+    },
+]

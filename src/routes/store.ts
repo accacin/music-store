@@ -10,6 +10,8 @@ import {
     album_create_post,
     album_delete_get,
     album_delete_post,
+    album_update_get,
+    album_update_post,
 } from '../controllers/album'
 import {
     category_list,
@@ -36,6 +38,12 @@ storeRouter.get('/album/:id/delete', album_delete_get)
 
 // POST request for deleting a category
 storeRouter.post('/album/:id/delete', album_delete_post)
+
+// GET request for updating a category
+storeRouter.get('/album/:id/update', album_update_get)
+
+// POST request for updating a category
+storeRouter.post('/album/:id/update', album_update_post)
 
 // GET request for all albums
 storeRouter.get('/album', album_list)
