@@ -110,7 +110,7 @@ export const album_create_post = [
         if (errors.isEmpty()) {
             try {
                 await album.save()
-                res.redirect('/store')
+                res.redirect(album.url)
             } catch (err) {
                 next(err)
             }

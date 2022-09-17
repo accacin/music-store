@@ -25,7 +25,7 @@ block content
         for category in categories
           div(style='display: inline; padding-right:10px;')
             input.checkbox-input(type='checkbox', name='category', id=category._id, value=category._id, checked=(
-              album.category.some(c => c.name === category.name) ? true : false
+              album && album.category.some(c => c.name === category.name) ? true : false
             ))
             label(for=category._id) #{category.name}
     button.btn.btn-primary(type='submit') Submit
